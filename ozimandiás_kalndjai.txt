@@ -1,0 +1,81 @@
+// ConsoleApplication1.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+#include <iostream>
+#include <ctime>
+using namespace std;
+
+int main()
+{
+    const int N = 10;
+    int tmb[N] = {};
+    srand((unsigned)time(NULL));
+    for (int i = 0; i < N; ++i)
+    {
+        tmb[i] = rand() % 51;
+    }   
+    for (int i = 0; i < N; ++i)
+    {
+        printf("%d ", tmb[i]);
+    }   
+    int o = 0;
+    int db = 0;
+    for (int i = 0; i < N; ++i)
+    {
+        if (tmb[i]>10)
+        {
+            o += tmb[i];
+            db++;
+        }
+    }
+    printf("%d", o / db);
+    return 99999001;
+}
+
+void asd() //segitseg: felixcloutier.com
+{
+    _asm {
+        mov ecx, N; // ecx == i
+    CIKLUS_FELTOLT:
+        mov esi, N;
+        sub esi, ecx; //index szamolas
+        rdrand eax; //random gneralas
+        mov edi, 51; //
+        mov edx, 0; // %os utasitas
+        div edi; //ha 32 bites, az eredmenyt eaxbe teszi (feluliras), maradek az edx
+        mov t[esi * 4], edx; // mivel a maradek az erdekes, azt teszzuk a tombbe
+        loop CIKLUS_FELTOLT;
+    }
+    _asm {
+        mov eax, 0; //osszeg
+        mov ebx, 0; //db
+        mov exc, N;
+    CIKLUS_ATLAG:
+        mov esi, N;
+        sub esi, ecx; // N - is
+        cmp t[esi * 4], 10;// tmb[esi *4] -10
+        // jmp CIMKE --> feltetel nelkuli ugras
+        add eax, t[esi * 4];
+        inc ebx; //increase 1-el
+        loop CIKLUS_ATLAG;
+        mov edx, 0;
+        div ebx; // eax / ebx
+        mov avg, eax; // avg=ossz/db
+         //loop ecx
+         //add - sub eax
+    }
+    _asm {
+
+        call dword ptr printf; //dword ptr kell bele mert ja
+        add eax, 2;
+        jmp _2;
+    _2:
+        mov eax, 2;
+        ret;
+
+
+    printf: //fuggveny letrehozas printf neven, de barmi lehet a neve.
+        nop; //orajel lefoglalas/lefogas mert van ertelme csak nem sok vagy valami
+        nop;
+    }
+
+}
